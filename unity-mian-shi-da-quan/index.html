@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<link href="https://cdn.bootcss.com/KaTeX/0.7.1/katex.min.css" rel="stylesheet">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext">
+  
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/fork-awesome/css/fork-awesome.min.css">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=7.1.2">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=7.1.2">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.1.2" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '7.1.2',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="0x01 什么是协程？  0x02 ArrayList 和 List 的主要区别？  0x03 OnEnable, Awake, Start 的调用顺序？  0x04 Unity 提供了哪些光源  0x05 private, public, protected, internal的区别  0x06 Unity MonoBehaviour 的生命周期  0x07 物理更新一般放在哪个函数里？  0">
+<meta name="keywords" content="Unity3D,面试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Unity3D 面试大全">
+<meta property="og:url" content="https://chengxubaba.net/unity-mian-shi-da-quan/index.html">
+<meta property="og:site_name" content="程序爸爸">
+<meta property="og:description" content="0x01 什么是协程？  0x02 ArrayList 和 List 的主要区别？  0x03 OnEnable, Awake, Start 的调用顺序？  0x04 Unity 提供了哪些光源  0x05 private, public, protected, internal的区别  0x06 Unity MonoBehaviour 的生命周期  0x07 物理更新一般放在哪个函数里？  0">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2019-06-07T14:44:43.767Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Unity3D 面试大全">
+<meta name="twitter:description" content="0x01 什么是协程？  0x02 ArrayList 和 List 的主要区别？  0x03 OnEnable, Awake, Start 的调用顺序？  0x04 Unity 提供了哪些光源  0x05 private, public, protected, internal的区别  0x06 Unity MonoBehaviour 的生命周期  0x07 物理更新一般放在哪个函数里？  0">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://chengxubaba.net/unity-mian-shi-da-quan/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Unity3D 面试大全 | 程序爸爸</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">程序爸爸</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <p class="site-subtitle">chengxubaba.net</p>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-python">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/Python/" rel="section"><i class="menu-item-icon fa fa-fw fa-python"></i> <br>Python</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-unity3d">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/Unity3D/" rel="section"><i class="menu-item-icon fa fa-fw fa-cube"></i> <br>Unity3D</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-fontend">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/前端/" rel="section"><i class="menu-item-icon fa fa-fw fa-html5"></i> <br>前端</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-后端">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/后端/" rel="section"><i class="menu-item-icon fa fa-fw fa-server"></i> <br>后端</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-blockchain">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/区块链/" rel="section"><i class="menu-item-icon fa fa-fw fa-link"></i> <br>区块链</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-math">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/数学/" rel="section"><i class="menu-item-icon fa fa-fw fa-superscript"></i> <br>数学</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://chengxubaba.net/unity-mian-shi-da-quan/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="James Li">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/uploads/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="程序爸爸">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Unity3D 面试大全
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-06-07 22:16:13 / 修改时间：22:44:43" itemprop="dateCreated datePublished" datetime="2019-06-07T22:16:13+08:00">2019-06-07</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Unity3D/" itemprop="url" rel="index"><span itemprop="name">Unity3D</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+            <span id="/unity-mian-shi-da-quan/" class="leancloud_visitors" data-flag-title="Unity3D 面试大全">
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              
+                <span class="post-meta-item-text">阅读次数：</span>
+              
+                <span class="leancloud-visitors-count"></span>
+            </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="0x01-什么是协程"><a class="markdownIt-Anchor" href="#0x01-什么是协程"></a> 0x01 什么是协程？</h4>
+<h4 id="0x02-arraylist-和-list-的主要区别"><a class="markdownIt-Anchor" href="#0x02-arraylist-和-list-的主要区别"></a> 0x02 ArrayList 和 List 的主要区别？</h4>
+<h4 id="0x03-onenable-awake-start-的调用顺序"><a class="markdownIt-Anchor" href="#0x03-onenable-awake-start-的调用顺序"></a> 0x03 OnEnable, Awake, Start 的调用顺序？</h4>
+<h4 id="0x04-unity-提供了哪些光源"><a class="markdownIt-Anchor" href="#0x04-unity-提供了哪些光源"></a> 0x04 Unity 提供了哪些光源</h4>
+<h4 id="0x05-private-public-protected-internal的区别"><a class="markdownIt-Anchor" href="#0x05-private-public-protected-internal的区别"></a> 0x05 private, public, protected, internal的区别</h4>
+<h4 id="0x06-unity-monobehaviour-的生命周期"><a class="markdownIt-Anchor" href="#0x06-unity-monobehaviour-的生命周期"></a> 0x06 Unity MonoBehaviour 的生命周期</h4>
+<h4 id="0x07-物理更新一般放在哪个函数里"><a class="markdownIt-Anchor" href="#0x07-物理更新一般放在哪个函数里"></a> 0x07 物理更新一般放在哪个函数里？</h4>
+<h4 id="0x08-向量的点乘-叉乘以及标准化向量的意义"><a class="markdownIt-Anchor" href="#0x08-向量的点乘-叉乘以及标准化向量的意义"></a> 0x08 向量的点乘、叉乘以及标准化向量的意义？</h4>
+<h4 id="0x09-怎么求空间中两点的距离"><a class="markdownIt-Anchor" href="#0x09-怎么求空间中两点的距离"></a> 0x09 怎么求空间中两点的距离？</h4>
+<h4 id="0x10-如何为场景烘培光照贴图"><a class="markdownIt-Anchor" href="#0x10-如何为场景烘培光照贴图"></a> 0x10 如何为场景烘培光照贴图？</h4>
+<h4 id="0x11-c-的委托是什么"><a class="markdownIt-Anchor" href="#0x11-c-的委托是什么"></a> 0x11 C# 的委托是什么</h4>
+<h4 id="0x12-unity3d中如何通过射线来检测碰撞物体"><a class="markdownIt-Anchor" href="#0x12-unity3d中如何通过射线来检测碰撞物体"></a> 0x12 Unity3D中如何通过射线来检测碰撞物体</h4>
+<h4 id="0x13-如何让已经存在的gameobject在loadlevel后不被卸载掉"><a class="markdownIt-Anchor" href="#0x13-如何让已经存在的gameobject在loadlevel后不被卸载掉"></a> 0x13 如何让已经存在的GameObject在LoadLevel后不被卸载掉？</h4>
+<h4 id="0x13-如何让已经存在的gameobject在loadlevel后不被卸载掉-2"><a class="markdownIt-Anchor" href="#0x13-如何让已经存在的gameobject在loadlevel后不被卸载掉-2"></a> 0x13 如何让已经存在的GameObject在LoadLevel后不被卸载掉？</h4>
+<h4 id="简述四元数quaternion的作用四元数对欧拉角的优点"><a class="markdownIt-Anchor" href="#简述四元数quaternion的作用四元数对欧拉角的优点"></a> 简述四元数Quaternion的作用，四元数对欧拉角的优点？</h4>
+<h4 id="物体发生碰撞的整个过程中有哪几个阶段分别对应的函数"><a class="markdownIt-Anchor" href="#物体发生碰撞的整个过程中有哪几个阶段分别对应的函数"></a> 物体发生碰撞的整个过程中，有哪几个阶段，分别对应的函数</h4>
+<ul>
+<li>OnCollisionEnter</li>
+<li>OnCollisionStay</li>
+<li>OnCollisionExit</li>
+</ul>
+<h4 id="unity3d-的物理引擎中施加力的方式"><a class="markdownIt-Anchor" href="#unity3d-的物理引擎中施加力的方式"></a> Unity3D 的物理引擎中施加力的方式</h4>
+<ul>
+<li>rigidbody.AddForce</li>
+<li>rigidbody.AddForceAtPosition</li>
+</ul>
+<h4 id="unity3d-的坐标空间有哪些"><a class="markdownIt-Anchor" href="#unity3d-的坐标空间有哪些"></a> Unity3D 的坐标空间有哪些</h4>
+<h4 id="下列代码在运行中会发生什么问题如何避免"><a class="markdownIt-Anchor" href="#下列代码在运行中会发生什么问题如何避免"></a> 下列代码在运行中会发生什么问题？如何避免？</h4>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">List&lt;<span class="keyword">int</span>&gt; list = <span class="keyword">new</span> List&lt;<span class="keyword">int</span>&gt;(<span class="keyword">new</span> <span class="keyword">int</span>[] &#123; <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span> &#125;);</span><br><span class="line"><span class="keyword">foreach</span> (<span class="keyword">int</span> item <span class="keyword">in</span> list)</span><br><span class="line">&#123;</span><br><span class="line">    Console.WriteLine(item * item);</span><br><span class="line">    list .Remove(item);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出第一个元素后报错：</p>
+<blockquote>
+<p>InvalidOperationException: Collection was modified; enumeration operation may not execute.</p>
+</blockquote>
+<p>不能在遍历数组的同时修改数组元素，比如增删操作</p>
+<h4 id="unity-协程和线程的区别"><a class="markdownIt-Anchor" href="#unity-协程和线程的区别"></a> Unity 协程和线程的区别</h4>
+<ul>
+<li>同一时间只能执行某个协程。开辟多个协程开销不大。协程适合对某任务进行分时处理。</li>
+<li>同一时间可以同时执行多个线程。开辟多条线程开销很大。线程适合多任务同时处理。</li>
+<li>协程，即协作式程序，其思想是，一系列互相依赖的协程间依次使用 CPU，每次只有一个协程工作，而其他协程处于休眠状态。协程实际上是在一个线程中，只不过每个协程对 CPU 进行分时，协程可以访问和使用 Unity 的所有方法和 Component</li>
+<li>线程，多线程是阻塞式的，每个 IO 都必须开启一个新的线程，但是对于多CPU的系统应该使用 thread，尤其是有大量数据运算的时刻，但是 IO密集型就不适合；而且thread中不能操作unity的很多方法和component</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/very-simple-state-machine/" rel="next" title="Unity 一个超级简单的有限状态机实现">
+                <i class="fa fa-chevron-left"></i> Unity 一个超级简单的有限状态机实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/unity-coroutines-vs-thread/" rel="prev" title="Unity3D 协程与线程的区别">
+                Unity3D 协程与线程的区别 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/uploads/avatar.jpg" alt="James Li">
+            
+              <p class="site-author-name" itemprop="name">James Li</p>
+              <div class="site-description motion-element" itemprop="description"></div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives">
+                
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">3</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#0x01-什么是协程"><span class="nav-number">1.</span> <span class="nav-text"> 0x01 什么是协程？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x02-arraylist-和-list-的主要区别"><span class="nav-number">2.</span> <span class="nav-text"> 0x02 ArrayList 和 List 的主要区别？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x03-onenable-awake-start-的调用顺序"><span class="nav-number">3.</span> <span class="nav-text"> 0x03 OnEnable, Awake, Start 的调用顺序？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x04-unity-提供了哪些光源"><span class="nav-number">4.</span> <span class="nav-text"> 0x04 Unity 提供了哪些光源</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x05-private-public-protected-internal的区别"><span class="nav-number">5.</span> <span class="nav-text"> 0x05 private, public, protected, internal的区别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x06-unity-monobehaviour-的生命周期"><span class="nav-number">6.</span> <span class="nav-text"> 0x06 Unity MonoBehaviour 的生命周期</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x07-物理更新一般放在哪个函数里"><span class="nav-number">7.</span> <span class="nav-text"> 0x07 物理更新一般放在哪个函数里？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x08-向量的点乘-叉乘以及标准化向量的意义"><span class="nav-number">8.</span> <span class="nav-text"> 0x08 向量的点乘、叉乘以及标准化向量的意义？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x09-怎么求空间中两点的距离"><span class="nav-number">9.</span> <span class="nav-text"> 0x09 怎么求空间中两点的距离？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x10-如何为场景烘培光照贴图"><span class="nav-number">10.</span> <span class="nav-text"> 0x10 如何为场景烘培光照贴图？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x11-c-的委托是什么"><span class="nav-number">11.</span> <span class="nav-text"> 0x11 C# 的委托是什么</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x12-unity3d中如何通过射线来检测碰撞物体"><span class="nav-number">12.</span> <span class="nav-text"> 0x12 Unity3D中如何通过射线来检测碰撞物体</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x13-如何让已经存在的gameobject在loadlevel后不被卸载掉"><span class="nav-number">13.</span> <span class="nav-text"> 0x13 如何让已经存在的GameObject在LoadLevel后不被卸载掉？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#0x13-如何让已经存在的gameobject在loadlevel后不被卸载掉-2"><span class="nav-number">14.</span> <span class="nav-text"> 0x13 如何让已经存在的GameObject在LoadLevel后不被卸载掉？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#简述四元数quaternion的作用四元数对欧拉角的优点"><span class="nav-number">15.</span> <span class="nav-text"> 简述四元数Quaternion的作用，四元数对欧拉角的优点？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#物体发生碰撞的整个过程中有哪几个阶段分别对应的函数"><span class="nav-number">16.</span> <span class="nav-text"> 物体发生碰撞的整个过程中，有哪几个阶段，分别对应的函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#unity3d-的物理引擎中施加力的方式"><span class="nav-number">17.</span> <span class="nav-text"> Unity3D 的物理引擎中施加力的方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#unity3d-的坐标空间有哪些"><span class="nav-number">18.</span> <span class="nav-text"> Unity3D 的坐标空间有哪些</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#下列代码在运行中会发生什么问题如何避免"><span class="nav-number">19.</span> <span class="nav-text"> 下列代码在运行中会发生什么问题？如何避免？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#unity-协程和线程的区别"><span class="nav-number">20.</span> <span class="nav-text"> Unity 协程和线程的区别</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 – <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">程序爸爸</span>
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.2"></script>
+
+  <script src="/js/motion.js?v=7.1.2"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/schemes/muse.js?v=7.1.2"></script>
+
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.2"></script>
+<script src="/js/post-details.js?v=7.1.2"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.2"></script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+  
+
+
+  
+
+
+
+
+  
+  
+  <script>
+    
+    function addCount(Counter) {
+      var $visitors = $('.leancloud_visitors');
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+
+      Counter('get', '/classes/Counter', { where: JSON.stringify({ url }) })
+        .done(function({ results }) {
+          if (results.length > 0) {
+            var counter = results[0];
+            
+            Counter('put', '/classes/Counter/' + counter.objectId, JSON.stringify({ time: { '__op': 'Increment', 'amount': 1 } }))
+            
+              .done(function() {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.time + 1);
+              })
+            
+              .fail(function ({ responseJSON }) {
+                console.log('Failed to save Visitor num, with error message: ' + responseJSON.error);
+              })
+          } else {
+            
+              Counter('post', '/classes/Counter', JSON.stringify({ title: title, url: url, time: 1 }))
+                .done(function() {
+                  var $element = $(document.getElementById(url));
+                  $element.find('.leancloud-visitors-count').text(1);
+                })
+                .fail(function() {
+                  console.log('Failed to create');
+                });
+            
+          }
+        })
+        .fail(function ({ responseJSON }) {
+          console.log('LeanCloud Counter Error: ' + responseJSON.code + ' ' + responseJSON.error);
+        });
+    }
+    
+
+    $(function() {
+      $.get('https://app-router.leancloud.cn/2/route?appId=' + 'Y3QXneBrYfQpiF1233SvyqBx-gzGzoHsz')
+        .done(function({ api_server }) {
+          var Counter = function(method, url, data) {
+            return $.ajax({
+              method: method,
+              url: 'https://' + api_server + '/1.1' + url,
+              headers: {
+                'X-LC-Id': 'Y3QXneBrYfQpiF1233SvyqBx-gzGzoHsz',
+                'X-LC-Key': 'GF68g8c1foUt7D6DwebOI2pH',
+                'Content-Type': 'application/json',
+              },
+              data: data
+            });
+          };
+          
+            addCount(Counter);
+          
+        });
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
